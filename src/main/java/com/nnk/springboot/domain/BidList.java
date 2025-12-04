@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 
 @Entity
@@ -16,8 +17,13 @@ public class BidList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer bidListId;
+
+    @NotBlank(message = "Account is mandatory")
     private String account;
+
+    @NotBlank(message = "Type is mandatory")
     private String type;
+
     private Double bidQuantity;
     private Double askQuantity;
     private Double bid;
