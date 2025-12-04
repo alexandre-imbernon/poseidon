@@ -17,11 +17,14 @@
             <a href="/ruleName/list">Rule</a>
         </div>
         <div class="col-6 text-right">
-            Logged in user: <b th:inline="text">[[${#httpServletRequest.remoteUser}]]</b>
+            Logged in user:
+            <b th:text="${#request.remoteUser != null ? #request.remoteUser : #authentication.principal.attributes['login']}"></b>
             <form th:action="@{/app-logout}" method="POST">
                 <input type="submit" value="Logout"/>
             </form>
         </div>
+
+
     </div>
 
     <div class="row"><h2>Bid List</h2></div>

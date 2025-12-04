@@ -1,27 +1,41 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" 
-	  xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="utf-8"/>
-<title>Home</title>
-<link rel="stylesheet" href="../../css/bootstrap.min.css" >
+    <meta charset="utf-8"/>
+    <title>Add CurvePoint</title>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css"/>
 </head>
 <body>
 <div class="container">
 
-	<div class="row">
-		<h2>Add New Curve Point</h2>
-	</div>
+    <div class="row">
+    <h2>Add New CurvePoint</h2>
+    </div>
 
-	<div class="row">
-		<form action="#" th:action="@{/curvePoint/validate}" th:object="${curvePoint}" method="post" class="form-horizontal" style="width: 100%">
-			<!--
-			TODO: Create a form to input the values of CurvePoint, there are 2 buttons: Save data and Cancel to the list CurvePoint
-			 -->
+    <div class="row">
+    <form th:action="@{/curvePoint/validate}" th:object="${curvePoint}" method="post">
+        <div class="form-group">
+            <label>Curve Id</label>
+            <input type="number" th:field="*{curveId}" class="form-control" placeholder="Curve Id"/>
+            <p th:if="${#fields.hasErrors('curveId')}" th:errors="*{curveId}" class="text-danger"></p>
+        </div>
 
-		</form>
-	</div>
+        <div class="form-group">
+            <label>Term</label>
+            <input type="number" step="0.01" th:field="*{term}" class="form-control" placeholder="Term"/>
+            <p th:if="${#fields.hasErrors('term')}" th:errors="*{term}" class="text-danger"></p>
+        </div>
 
+        <div class="form-group">
+            <label>Value</label>
+            <input type="number" step="0.01" th:field="*{value}" class="form-control" placeholder="Value"/>
+            <p th:if="${#fields.hasErrors('value')}" th:errors="*{value}" class="text-danger"></p>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-2">Save</button>
+        <a th:href="@{/curvePoint/list}" class="btn btn-secondary mt-2">Cancel</a>
+    </form>
 </div>
 </body>
 </html>

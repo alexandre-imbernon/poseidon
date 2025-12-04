@@ -6,60 +6,66 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.sql.Timestamp;
 
 @Controller
+@RequestMapping("/curvePoint")
 public class CurveController {
+
     @Autowired
     private CurvePointRepository curvePointRepository;
 
-    @RequestMapping("/curvePoint/list")
-    public String home(Model model)
-    {
-        model.addAttribute("curvepoints", curvePointRepository.findAll());
+    // Liste
+    @GetMapping("/list")
+    public String home(Model model) {
+        model.addAttribute("curvepointLists", curvePointRepository.findAll());
         return "curvePoint/list";
     }
 
-    @GetMapping("/curvePoint/add")
-    public String addBidForm(CurvePoint bid) {
+    // Formulaire add
+    @GetMapping("/add")
+    public String addForm(CurvePoint curvePoint) {
         return "curvePoint/add";
     }
 
-    @PostMapping("/curvePoint/validate")
-    public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model) {
-    if (!result.hasErrors()) {
-        curvePointRepository.save(curvePoint);
-        return "redirect:/curvePoint/add";
-    }
-    return "curvePoint/add";
-}
-
-    @GetMapping("/curvePoint/update/{id}")
-    public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        CurvePoint curvePoint = curvePointRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid curvepoint Id:" + id));
-        model.addAttribute("curvepoint", curvePoint);
-    return "curvePoint/update";
-    }
-
-    @PostMapping("/curvePoint/update/{id}")
-    public String updateBid(@PathVariable("id") Integer id, @Valid CurvePoint curvePoint,
-                             BindingResult result, Model model) {
+    // Validation add
+    @PostMapping("/validate")
+    public String validate(@Valid CurvePoint curvePoint, BindingResult result) {
         if (result.hasErrors()) {
-            curvePoint.setCurveId(id); // conserver l'id pour Thymeleaf
-            return "curvePoint/update/";
+            return "curvePoint/add";
         }
-        curvePointRepository.save(curvePoint); // update automatique si id existe
+        curvePoint.setCreationDate(new Timestamp(System.currentTimeMillis()));
+        curvePointRepository.save(curvePoint);
         return "redirect:/curvePoint/list";
     }
 
-    @GetMapping("/curvePoint/delete/{id}")
-    public String deleteBid(@PathVariable("id") Integer id, Model model) {
+    // Formulaire update
+    @GetMapping("/update/{id}")
+    public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
+        CurvePoint curvePoint = curvePointRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid curvepoint Id:" + id));
+        model.addAttribute("curvePoint", curvePoint);
+        return "curvePoint/update";
+    }
+
+    // Validation update
+    @PostMapping("/update/{id}")
+    public String updateCurvePoint(@PathVariable("id") Integer id, @Valid CurvePoint curvePoint,
+                                   BindingResult result) {
+        if (result.hasErrors()) {
+            curvePoint.setId(id);
+            return "curvePoint/update";
+        }
+        curvePointRepository.save(curvePoint);
+        return "redirect:/curvePoint/list";
+    }
+
+    // Delete
+    @GetMapping("/delete/{id}")
+    public String deleteCurvePoint(@PathVariable("id") Integer id) {
         CurvePoint curvePoint = curvePointRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid curvepoint Id:" + id));
         curvePointRepository.delete(curvePoint);
